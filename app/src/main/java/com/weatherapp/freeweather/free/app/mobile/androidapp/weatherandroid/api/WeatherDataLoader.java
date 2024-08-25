@@ -1,25 +1,23 @@
 package com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api;
 
 import android.content.Context;
-import android.widget.ImageView;
+import android.util.Log;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.MainActivity;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.R;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.parser.WeatherParser;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.WeatherResponse;
 
-import java.io.IOException;
-import java.util.List;
-import android.util.Log;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import java.io.IOException;
 
 public class WeatherDataLoader {
 
@@ -27,7 +25,7 @@ public class WeatherDataLoader {
     private final Context context;
     private final Spinner citiesSpinner;
     private final TextView temperatureTextView;
-    private ImageView weatherIcon;
+    private final ImageView weatherIcon;
     private final OkHttpClient client = new OkHttpClient();
     private final Gson gson = new Gson();
 
@@ -38,54 +36,71 @@ public class WeatherDataLoader {
         this.weatherIcon = weatherIcon;
     }
 
-    public void getWeather() {
+    public void getWeather(WeatherCallback callback) {
         String selectedCity = citiesSpinner.getSelectedItem().toString();
-        Log.d("WeatherDataLoader", "Selected city: " + selectedCity);
 
         if (selectedCity == null || selectedCity.isEmpty()) {
-            Log.e("WeatherDataLoader", "Selected city is null or empty");
+            callback.onFailure(new Exception("City is null or empty"));
             return;
         }
 
         String apiKey = ApiKeyLoader.getApiKey(context);
+
         if (apiKey == null) {
-            // Handle missing API key
-            Log.e("WeatherDataLoader", "API key is missing");
+            callback.onFailure(new Exception("API Key is null"));
             return;
         }
 
-        // Include API key in URL as a parameter
-        String url = GET_WEATHER_URL + "?q=" + selectedCity + "&key=" + apiKey;
-        Log.d("WeatherDataLoader", "Request URL: " + url);
+        String url = GET_WEATHER_URL + "?Key=" + apiKey + "&q=" + selectedCity;
+
 
         Request request = new Request.Builder()
                 .url(url)
+                .addHeader("Authorization", "Bearer " + apiKey)
                 .build();
 
-        Log.d("WeatherDataLoader", "Fetching weather data");
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e("WeatherDataLoader", "Request failed", e);
+                ((MainActivity) context).runOnUiThread(() -> callback.onFailure(e));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
-                    Log.d("WeatherDataLoader", "Weather data received: " + responseBody);
-                    WeatherResponse weatherResponse = gson.fromJson(responseBody, WeatherResponse.class);
+                    Log.d("WeatherDataLoader", "Response: " + responseBody);
 
-                    ((MainActivity) context).runOnUiThread(() -> {
-                        WeatherParser parser = new WeatherParser();
-                        String temperature = parser.parseTemperature(weatherResponse);
-                        temperatureTextView.setText(temperature);
-                        Log.d("WeatherDataLoader", "Temperature text set: " + temperature);
-                    });
+                    try {
+                        WeatherResponse weatherResponse = gson.fromJson(responseBody, WeatherResponse.class);
+                        if (weatherResponse != null) {
+                            CurrentWeather currentWeather = new CurrentWeather(
+                                    weatherResponse.getTempC(),
+                                    weatherResponse.getTempF(),
+                                    weatherResponse.getConditionText(),
+                                    weatherResponse.getConditionIcon(),
+                                    weatherResponse.getConditionCode()
+                            );
+                            ((MainActivity) context).runOnUiThread(() -> callback.onSuccess(currentWeather));
+                        } else {
+                            callback.onFailure(new Exception("WeatherResponse is null"));
+                        }
+                    } catch (Exception e) {
+                        Log.e("WeatherDataLoader", "Failed to parse JSON", e);
+                        callback.onFailure(new Exception("Failed to parse JSON"));
+                    }
                 } else {
-                    Log.e("WeatherDataLoader", "Failed to fetch weather data");
+                    Log.e("WeatherDataLoader", "Response not successful: " + response.code());
+                    callback.onFailure(new Exception("Response not successful"));
                 }
             }
         });
+    }
+
+    public interface WeatherCallback {
+        void onSuccess(CurrentWeather currentWeather);
+        void onFailure(Exception e);
     }
 }

@@ -4,11 +4,11 @@ import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.mode
 
 public class WeatherParser {
 
-    public String parseTemperature(WeatherResponse weatherResponse) {
-        if (weatherResponse != null && weatherResponse.getCurrent() != null) {
-            double tempC = weatherResponse.getCurrent().getTempC();
-            return tempC + " °C";
-        }
-        return "N/A";
-    }
+//    public String parseTemperature(WeatherResponse weatherResponse) {
+//        if (weatherResponse != null && weatherResponse.getCurrent() != null) {
+//            double tempC = weatherResponse.getCurrent().getTempC();
+//            return tempC + " °C";
+//        }
+//        return "N/A";
+//    }
 }

@@ -8,9 +8,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CityDataloader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CountryDataLoader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.WeatherDataLoader;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private CityDataloader cityDataloader;
     private WeatherDataLoader weatherDataLoader;
     private TextView temperatureTextView;
-    private ImageView weatherIcon;
+    private ImageView weatherTodayIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         countriesSpinner = findViewById(R.id.countries);
         citiesSpinner = findViewById(R.id.cities);
         temperatureTextView = findViewById(R.id.temperature);
-        weatherIcon = findViewById(R.id.weather_today_img);
+        weatherTodayIcon = findViewById(R.id.weather_today_img);
 
         countryDataLoader = new CountryDataLoader(this, countriesSpinner);
         countryDataLoader.fetchCountries();
@@ -49,11 +51,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        weatherDataLoader = new WeatherDataLoader(this, citiesSpinner, temperatureTextView, weatherIcon);
+        weatherDataLoader = new WeatherDataLoader(this, citiesSpinner, temperatureTextView, weatherTodayIcon);
         citiesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
-                weatherDataLoader.getWeather();
+                weatherDataLoader.getWeather(new WeatherDataLoader.WeatherCallback() {
+                    @Override
+                    public void onSuccess(CurrentWeather currentWeather) {
+                        temperatureTextView.setText(currentWeather.getConditionText());
+                        weatherTodayIcon.setImageResource(R.drawable.weather_default);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        e.printStackTrace();
+                        temperatureTextView.setText("Error loading weather");
+                    }
+                });
             }
 
             @Override
