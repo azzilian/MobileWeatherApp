@@ -6,10 +6,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ImageView;
 
-import com.google.gson.Gson;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.MainActivity;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.WeatherResponse;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.parser.WeatherResponseParser;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -27,7 +26,7 @@ public class WeatherDataLoader {
     private final TextView temperatureTextView;
     private final ImageView weatherIcon;
     private final OkHttpClient client = new OkHttpClient();
-    private final Gson gson = new Gson();
+    private final WeatherResponseParser parser = new WeatherResponseParser();
 
     public WeatherDataLoader(Context context, Spinner citiesSpinner, TextView temperatureTextView, ImageView weatherIcon) {
         this.context = context;
@@ -53,12 +52,9 @@ public class WeatherDataLoader {
 
         String url = GET_WEATHER_URL + "?Key=" + apiKey + "&q=" + selectedCity;
 
-
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + apiKey)
                 .build();
-
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -74,19 +70,8 @@ public class WeatherDataLoader {
                     Log.d("WeatherDataLoader", "Response: " + responseBody);
 
                     try {
-                        WeatherResponse weatherResponse = gson.fromJson(responseBody, WeatherResponse.class);
-                        if (weatherResponse != null) {
-                            CurrentWeather currentWeather = new CurrentWeather(
-                                    weatherResponse.getTempC(),
-                                    weatherResponse.getTempF(),
-                                    weatherResponse.getConditionText(),
-                                    weatherResponse.getConditionIcon(),
-                                    weatherResponse.getConditionCode()
-                            );
-                            ((MainActivity) context).runOnUiThread(() -> callback.onSuccess(currentWeather));
-                        } else {
-                            callback.onFailure(new Exception("WeatherResponse is null"));
-                        }
+                        CurrentWeather currentWeather = parser.parseCurrentWeather(responseBody);
+                        ((MainActivity) context).runOnUiThread(() -> callback.onSuccess(currentWeather));
                     } catch (Exception e) {
                         Log.e("WeatherDataLoader", "Failed to parse JSON", e);
                         callback.onFailure(new Exception("Failed to parse JSON"));
