@@ -29,7 +29,6 @@ public class WeatherConditions {
                 int icon = obj.getInt("icon");
                 int iconResId = context.getResources().getIdentifier("weather_" + icon, "drawable", context.getPackageName());
 
-                // Проверяем, существует ли ресурс
                 if (iconResId == 0) {
                     System.out.println("Resource not found for icon code: " + icon);
                 } else {
@@ -45,4 +44,3 @@ public class WeatherConditions {
         return iconMap.getOrDefault(code, R.drawable.weather_default);
     }
 }
-
