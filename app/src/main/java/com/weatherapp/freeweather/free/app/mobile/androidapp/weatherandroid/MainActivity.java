@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
                                 + currentWeather.getTempF()
                                 + currentWeather.getConditionText());
 
-                        weatherTodayIcon.setImageResource(R.drawable.weather_default);
                     }
 
                     @Override

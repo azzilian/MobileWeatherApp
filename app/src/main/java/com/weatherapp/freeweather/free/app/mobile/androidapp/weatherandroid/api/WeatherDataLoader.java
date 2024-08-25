@@ -7,6 +7,8 @@ import android.widget.TextView;
 import android.widget.ImageView;
 
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.MainActivity;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.R;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.mapper.WeatherImageLoader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.parser.WeatherResponseParser;
 
@@ -71,7 +73,11 @@ public class WeatherDataLoader {
 
                     try {
                         CurrentWeather currentWeather = parser.parseCurrentWeather(responseBody);
-                        ((MainActivity) context).runOnUiThread(() -> callback.onSuccess(currentWeather));
+                        ((MainActivity) context).runOnUiThread(() -> {
+                                String iconUrl = "https:" + currentWeather.getConditionIcon();
+                                WeatherImageLoader.loadImage(context, weatherIcon, iconUrl, R.drawable.weather_default);
+                                callback.onSuccess(currentWeather);
+                       });
                     } catch (Exception e) {
                         Log.e("WeatherDataLoader", "Failed to parse JSON", e);
                         callback.onFailure(new Exception("Failed to parse JSON"));
