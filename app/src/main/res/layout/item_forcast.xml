@@ -6,52 +6,69 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <!-- Background image -->
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:id="@+id/weather_forecast_item_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+            <!--            android:text="TemperatureC"-->
+            <TextView
+                android:id="@+id/temperatureC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center" />
+            <!--            android:text="TemperatureF"-->
+            <TextView
+                android:id="@+id/temperatureF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center" />
+            <!--            android:text="TemperatureF"-->
+            <TextView
+                android:id="@+id/condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:maxLines="3"
+                android:singleLine="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/forecast_text"
+                android:id="@+id/weather_today_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Day 1"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:layout_margin="10dp"
+                android:text="Weather today" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+            <ImageView
+                android:id="@+id/weather_today_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/forecast_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp" />
-
-        <ImageView
-            android:id="@+id/forecast_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
     </LinearLayout>
-
-    <!--        android:src="@drawable/background_image"/>-->
-
-
-    <!--        android:src="@drawable/forecast_icon"/>-->
-
-    <!-- Forecast text -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
