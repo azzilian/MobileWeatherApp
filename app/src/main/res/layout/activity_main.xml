@@ -149,8 +149,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/forecast_recycler_view"
-            android:layout_width="373dp"
-            android:layout_height="342dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:orientation="horizontal"
             android:scrollbars="horizontal" />
