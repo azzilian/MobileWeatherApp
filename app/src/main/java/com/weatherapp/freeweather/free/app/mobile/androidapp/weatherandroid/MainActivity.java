@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 weatherDataLoader.getWeather(new WeatherDataLoader.WeatherCallback() {
                     @Override
                     public void onSuccess(CurrentWeather currentWeather) {
-                        temperatureTextViewC.setText(currentWeather.getTempC() + " C");
-                        temperatureTextViewF.setText(currentWeather.getTempC() + " F");
-                        temperatureTextViewCondition.setText(currentWeather.getConditionText());
+                        temperatureTextViewC.setText("Temperature: " + currentWeather.getTempC() + "°C");
+                        temperatureTextViewF.setText("Temperature: " + currentWeather.getTempC() + "°F");
+                        temperatureTextViewCondition.setText("Condition: " + currentWeather.getConditionText());
                     }
 
                     @Override

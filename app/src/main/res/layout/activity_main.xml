@@ -65,7 +65,7 @@
 
     <LinearLayout
         android:id="@+id/weather_today_layout"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginTop="10dp"
@@ -104,24 +104,26 @@
             <!--            android:text="TemperatureC"-->
             <TextView
                 android:id="@+id/temperatureC"
-                android:layout_width="174dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center" />
             <!--            android:text="TemperatureF"-->
             <TextView
                 android:id="@+id/temperatureF"
-                android:layout_width="174dp"
-                android:layout_height="26dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center" />
             <!--            android:text="TemperatureF"-->
             <TextView
                 android:id="@+id/condition"
-                android:layout_width="174dp"
-                android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:maxLines="3"
+                android:singleLine="false" />
         </LinearLayout>
 
     </LinearLayout>
