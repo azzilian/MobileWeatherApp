@@ -5,10 +5,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bumptech.glide.Glide;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CityDataloader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CountryDataLoader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.WeatherDataLoader;
@@ -70,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
                         e.printStackTrace();
-//                        temperatureTextView.setText("Error loading weather");
+                        temperatureTextViewC.setText("Error loading weather");
                     }
                 });
             }
