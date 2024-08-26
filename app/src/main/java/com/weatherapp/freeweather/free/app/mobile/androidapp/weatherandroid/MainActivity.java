@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CityDataloader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CountryDataLoader;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.mapper.WeatherConditions;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.WeatherDataLoader;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,26 +17,23 @@ public class MainActivity extends AppCompatActivity {
     private Spinner citiesSpinner;
     private CountryDataLoader countryDataLoader;
     private CityDataloader cityDataloader;
+    private WeatherDataLoader weatherDataLoader;
+    private TextView temperatureTextViewC;
+    private TextView temperatureTextViewF;
+    private TextView temperatureTextViewCondition;
+    private ImageView weatherTodayIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WeatherConditions.loadConditions(this);
-        ImageView weatherIcon = findViewById(R.id.weather_today_img);
-        int weatherCode = 113;
-        int iconResId = WeatherConditions.getIconForCode(weatherCode);
-
-        if (iconResId != R.drawable.weather_default) {
-            weatherIcon.setImageResource(iconResId);
-        } else {
-            System.out.println("Using default icon");
-            weatherIcon.setImageResource(R.drawable.weather_default);
-        }
-
         countriesSpinner = findViewById(R.id.countries);
         citiesSpinner = findViewById(R.id.cities);
+        temperatureTextViewC = findViewById(R.id.temperatureC);
+        temperatureTextViewF = findViewById(R.id.temperatureF);
+        temperatureTextViewCondition = findViewById(R.id.condition);
+        weatherTodayIcon = findViewById(R.id.weather_today_img);
 
         countryDataLoader = new CountryDataLoader(this, countriesSpinner);
         countryDataLoader.fetchCountries();
@@ -46,6 +44,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
                 cityDataloader.fetchCities();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        weatherDataLoader = new WeatherDataLoader(this, citiesSpinner, weatherTodayIcon);
+        citiesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                weatherDataLoader.getWeather(new WeatherDataLoader.WeatherCallback() {
+                    @Override
+                    public void onSuccess(CurrentWeather currentWeather) {
+                        temperatureTextViewC.setText("Temperature: " + currentWeather.getTempC() + "°C");
+                        temperatureTextViewF.setText("Temperature: " + currentWeather.getTempC() + "°F");
+                        temperatureTextViewCondition.setText("Condition: " + currentWeather.getConditionText());
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        e.printStackTrace();
+                        temperatureTextViewC.setText("Error loading weather");
+                    }
+                });
             }
 
             @Override

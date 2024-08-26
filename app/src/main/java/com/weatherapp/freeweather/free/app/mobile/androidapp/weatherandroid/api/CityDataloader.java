@@ -51,7 +51,7 @@ public class CityDataloader {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace(); // Handle the error
+                e.printStackTrace();
             }
 
             @Override

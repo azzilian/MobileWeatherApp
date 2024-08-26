@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/src/main/res/weather_api_key.properties
+/app/src/main/res/raw/weather_api_key.properties
