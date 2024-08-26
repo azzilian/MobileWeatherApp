@@ -21,7 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private CountryDataLoader countryDataLoader;
     private CityDataloader cityDataloader;
     private WeatherDataLoader weatherDataLoader;
-    private TextView temperatureTextView;
+    private TextView temperatureTextViewC;
+    private TextView temperatureTextViewF;
+    private TextView temperatureTextViewCondition;
     private ImageView weatherTodayIcon;
 
     @Override
@@ -31,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
         countriesSpinner = findViewById(R.id.countries);
         citiesSpinner = findViewById(R.id.cities);
-        temperatureTextView = findViewById(R.id.temperature);
+        temperatureTextViewC = findViewById(R.id.temperatureC);
+        temperatureTextViewF = findViewById(R.id.temperatureF);
+        temperatureTextViewCondition = findViewById(R.id.condition);
         weatherTodayIcon = findViewById(R.id.weather_today_img);
 
         countryDataLoader = new CountryDataLoader(this, countriesSpinner);
@@ -51,25 +55,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        weatherDataLoader = new WeatherDataLoader(this, citiesSpinner, temperatureTextView, weatherTodayIcon);
+        weatherDataLoader = new WeatherDataLoader(this, citiesSpinner, weatherTodayIcon);
         citiesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
                 weatherDataLoader.getWeather(new WeatherDataLoader.WeatherCallback() {
                     @Override
                     public void onSuccess(CurrentWeather currentWeather) {
-                        temperatureTextView.setText("C "
-                                + currentWeather.getTempC()
-                                + "F "
-                                + currentWeather.getTempF()
-                                + currentWeather.getConditionText());
-
+                        temperatureTextViewC.setText(currentWeather.getTempC() + " C");
+                        temperatureTextViewF.setText(currentWeather.getTempC() + " F");
+                        temperatureTextViewCondition.setText(currentWeather.getConditionText());
                     }
 
                     @Override
                     public void onFailure(Exception e) {
                         e.printStackTrace();
-                        temperatureTextView.setText("Error loading weather");
+//                        temperatureTextView.setText("Error loading weather");
                     }
                 });
             }

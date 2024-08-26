@@ -25,15 +25,13 @@ public class WeatherDataLoader {
     private static final String GET_WEATHER_URL = "https://api.weatherapi.com/v1/current.json";
     private final Context context;
     private final Spinner citiesSpinner;
-    private final TextView temperatureTextView;
     private final ImageView weatherIcon;
     private final OkHttpClient client = new OkHttpClient();
     private final WeatherResponseParser parser = new WeatherResponseParser();
 
-    public WeatherDataLoader(Context context, Spinner citiesSpinner, TextView temperatureTextView, ImageView weatherIcon) {
+    public WeatherDataLoader(Context context, Spinner citiesSpinner, ImageView weatherIcon) {
         this.context = context;
         this.citiesSpinner = citiesSpinner;
-        this.temperatureTextView = temperatureTextView;
         this.weatherIcon = weatherIcon;
     }
 

@@ -9,105 +9,150 @@
     tools:context=".MainActivity">
 
 
-    <Spinner
-        android:id="@+id/countries"
+    <LinearLayout
+        android:id="@+id/countries_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:tooltipText="Choose country"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toEndOf="@id/country_label"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/country_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Select your country"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@id/countries"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/cities"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:tooltipText="Choose city"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toEndOf="@id/city_label"
-        app:layout_constraintTop_toBottomOf="@id/countries" />
-
-    <TextView
-        android:id="@+id/city_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Select your city"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@id/cities"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/country_label" />
-
-    <TextView
-        android:id="@+id/weather_today_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:text="Weather today"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/weather_today_img"
-        android:layout_width="96dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        app:layout_constraintEnd_toStartOf="@+id/weather_today_label"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/city_label"
-        app:layout_constraintVertical_bias="0.165" />
-
-    <TextView
-        android:id="@+id/forecast_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
-        android:text="Weather for next 7 days"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
-        app:layout_constraintStart_toStartOf="@+id/forecast_recycler_view"
-        app:layout_constraintTop_toBottomOf="@+id/weather_today_label" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/forecast_recycler_view"
-        android:layout_width="373dp"
-        android:layout_height="342dp"
+        android:layout_margin="10dp"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:scrollbars="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/forecast_label"
-        tools:layout_editor_absoluteX="19dp" />
-
-    <TextView
-        android:id="@+id/temperature"
-        android:layout_width="171dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="30dp"
-        android:text="Temperature"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/weather_today_label"
-        app:layout_constraintTop_toBottomOf="@+id/cities" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/country_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Select your country"
+            android:textAlignment="center" />
+
+        <Spinner
+            android:id="@+id/countries"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:tooltipText="Choose country" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cities_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/countries_layout">
+
+        <TextView
+            android:id="@+id/city_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Select your city"
+            android:textAlignment="center" />
+
+        <Spinner
+            android:id="@+id/cities"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:tooltipText="Choose city" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/weather_today_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@id/forecast_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cities_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/weather_today_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Weather today" />
+
+            <ImageView
+                android:id="@+id/weather_today_img"
+                android:layout_width="141dp"
+                android:layout_height="98dp"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="165dp"
+            android:layout_height="118dp"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+            <!--            android:text="TemperatureC"-->
+            <TextView
+                android:id="@+id/temperatureC"
+                android:layout_width="174dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center" />
+            <!--            android:text="TemperatureF"-->
+            <TextView
+                android:id="@+id/temperatureF"
+                android:layout_width="174dp"
+                android:layout_height="26dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center" />
+            <!--            android:text="TemperatureF"-->
+            <TextView
+                android:id="@+id/condition"
+                android:layout_width="174dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/forecast_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/weather_today_layout">
+
+        <TextView
+            android:id="@+id/forecast_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Weather for next 7 days" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/forecast_recycler_view"
+            android:layout_width="373dp"
+            android:layout_height="342dp"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
