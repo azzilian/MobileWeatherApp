@@ -5,41 +5,38 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.MainActivity;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.R;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.domain.ForecastApiService;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.mapper.WeatherImageLoader;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.ForecastWeather;
-import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.ForecastDay;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ForeCastDataLoader {
-    private static final String BASE_URL = "https://api.weatherapi.com/v1/";
+    private static final String TAG = "ForeCastDataLoader";
+    private static final String GET_FORECAST_URL = "https://api.weatherapi.com/v1/forecast.json";
     private final Context context;
     private final Spinner citiesSpinner;
     private final ImageView weatherIcon;
-    private final ForecastApiService apiService;
+    private final OkHttpClient client = new OkHttpClient();
 
     public ForeCastDataLoader(Context context, Spinner citiesSpinner, ImageView weatherIcon) {
         this.context = context;
         this.citiesSpinner = citiesSpinner;
         this.weatherIcon = weatherIcon;
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        apiService = retrofit.create(ForecastApiService.class);
     }
 
     public void getWeatherForecast(WeatherCallback callback) {
@@ -55,56 +52,85 @@ public class ForeCastDataLoader {
             return;
         }
 
-        Call<ForecastResponse> call = apiService.getWeatherForecast(apiKey, selectedCity, 7);
-        call.enqueue(new Callback<ForecastResponse>() {
+        String url = GET_FORECAST_URL + "?key=" + apiKey + "&q=" + selectedCity + "&days=7";
+
+        Log.d(TAG, "Sending request to: " + url);
+
+        Request request = new Request.Builder().url(url).build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ForecastResponse forecastResponse = response.body();
-                    List<ForecastWeather> forecastWeatherList = new ArrayList<>();
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Request failed", e);
+                ((MainActivity) context).runOnUiThread(() -> callback.onFailure(e));
+            }
 
-                    // Преобразуйте ForecastResponse в список ForecastWeather
-                    for (ForecastDay forecastday : forecastResponse.getForecast().getForecastday()) {
-                        ForecastWeather forecastWeather = new ForecastWeather(
-                                LocalDate.parse(forecastday.getDate()),
-                                forecastday.getDay().getAvgtemp_c(),
-                                forecastday.getDay().getAvgtemp_f(),
-                                forecastday.getDay().getConditionText(),
-                                forecastday.getDay().getConditionIcon(),
-                                forecastday.getDay().getConditionCode()
-                        );
-                        forecastWeatherList.add(forecastWeather);
+            // In ForeCastDataLoader.java
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    String responseBody = response.body().string();
+                    Log.d("ForeCastDataLoader", "Raw JSON response: " + responseBody);
+
+                    // Assuming the responseBody is in JSON format, parse it to Map
+                    Map<String, Object> weatherData = new Gson().fromJson(responseBody, new TypeToken<Map<String, Object>>(){}.getType());
+
+                    // Notify success with the parsed data
+                    if (callback != null) {
+                        callback.onSuccess(weatherData);
                     }
-
-                    if (!forecastWeatherList.isEmpty()) {
-                        ((MainActivity) context).runOnUiThread(() -> {
-                            // Используем первый элемент списка для отображения иконки
-                            String iconUrl = "https:" + forecastWeatherList.get(0).getConditionIcon();
-                            WeatherImageLoader.loadImage(context, weatherIcon, iconUrl, R.drawable.weather_default);
-                            callback.onSuccess(forecastWeatherList);
-                        });
-                    } else {
-                        ((MainActivity) context).runOnUiThread(() ->
-                                callback.onFailure(new Exception("No forecast data available"))
-                        );
+                } catch (Exception e) {
+                    Log.e("ForeCastDataLoader", "Failed to parse JSON", e);
+                    if (callback != null) {
+                        callback.onFailure(e);
                     }
-
-                } else {
-                    Log.e("ForeCastDataLoader", "Response not successful: " + response.code());
-                    callback.onFailure(new Exception("Response not successful"));
                 }
             }
 
-            @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {
-                Log.e("ForeCastDataLoader", "Request failed", t);
-                ((MainActivity) context).runOnUiThread(() -> callback.onFailure(new Exception("Request failed", t)));
-            }
         });
     }
 
+    private Map<String, Object> parseJsonToMap(String json) throws JSONException {
+        Map<String, Object> map = new HashMap<>();
+        JSONObject jsonObject = new JSONObject(json);
+        map = toMap(jsonObject);
+        return map;
+    }
+
+    private Map<String, Object> toMap(JSONObject jsonObject) throws JSONException {
+        Map<String, Object> map = new HashMap<>();
+        JSONArray names = jsonObject.names();
+        if (names != null) {
+            for (int i = 0; i < names.length(); i++) {
+                String key = names.getString(i);
+                Object value = jsonObject.get(key);
+                if (value instanceof JSONObject) {
+                    value = toMap((JSONObject) value);
+                } else if (value instanceof JSONArray) {
+                    value = toList((JSONArray) value);
+                }
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
+    private Object toList(JSONArray jsonArray) throws JSONException {
+        int length = jsonArray.length();
+        Object[] list = new Object[length];
+        for (int i = 0; i < length; i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            } else if (value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
+            list[i] = value;
+        }
+        return list;
+    }
+
     public interface WeatherCallback {
-        void onSuccess(List<ForecastWeather> forecastWeatherList);
+        void onSuccess(Map<String, Object> weatherData);
         void onFailure(Exception e);
     }
 }
