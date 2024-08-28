@@ -71,8 +71,8 @@ public class FetchForecastTask extends AsyncTask<Void, Void, Map<String, Object>
             Map<Integer, List<String>> forecastMap = parser.parseForecastWeather(weatherData);
             if (forecastMap.containsKey(1)) {
                 List<String> day1Data = forecastMap.get(1);
-                Double avgTempC = Double.parseDouble(day1Data.get(0));
-                activity.getButton().setText(String.format("%.1f°C", avgTempC));
+                String text = day1Data.get(2);
+                activity.getButton().setText(String.format(text));
             } else {
                 Toast.makeText(activity, "No data found for day 1.", Toast.LENGTH_SHORT).show();
             }
