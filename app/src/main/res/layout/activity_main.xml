@@ -18,7 +18,8 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <TextView
             android:id="@+id/country_label"
@@ -26,7 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="Select your country"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            />
 
         <Spinner
             android:id="@+id/countries"
@@ -155,5 +157,13 @@
             android:orientation="horizontal"
             android:scrollbars="horizontal" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="21dp"
+        tools:layout_editor_absoluteY="242dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

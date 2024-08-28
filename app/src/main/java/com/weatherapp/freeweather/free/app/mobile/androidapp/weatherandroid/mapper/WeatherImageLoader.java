@@ -17,4 +17,5 @@ public class WeatherImageLoader {
             .apply(requestOptions)
             .into(imageView);
     }
+
 }
