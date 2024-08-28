@@ -19,6 +19,7 @@ import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.CountryDataLoader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.ForeCastDataLoader;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.api.WeatherDataLoader;
+import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.domain.FetchForecastTask;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.CurrentWeather;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.model.ForecastWeather;
 import com.weatherapp.freeweather.free.app.mobile.androidapp.weatherandroid.parser.ForecastResponseParser;
@@ -47,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     private ForecastWeather forecastWeather;
     private ForecastResponseParser forecastResponseParser;
-
-    private RecyclerView forecastRecyclerView;
-    private CustomAdapter customAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
                         temperatureTextViewC.setText("Temperature: " + currentWeather.getTempC() + "°C");
                         temperatureTextViewF.setText("Temperature: " + currentWeather.getTempF() + "°F");
                         temperatureTextViewCondition.setText("Condition: " + currentWeather.getConditionText());
+
+                        // Запускаем асинхронную задачу для получения прогноза
+                        new FetchForecastTask(foreCastDataLoader, MainActivity.this).execute();
                     }
 
                     @Override
@@ -116,47 +117,9 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.button);
         foreCastDataLoader = new ForeCastDataLoader(this, citiesSpinner, weatherForeCastIcon);
         forecastResponseParser = new ForecastResponseParser(); // Инициализация парсера
+    }
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("WeatherApp", "Button clicked, sending API request...");
-
-                foreCastDataLoader.getWeatherForecast(new ForeCastDataLoader.WeatherCallback() {
-                    @Override
-                    public void onSuccess(Map<String, Object> weatherData) {
-                        // Получаем данные для первого дня
-                        Map<Integer, List<String>> forecastMap = forecastResponseParser.parseForecastWeather(weatherData);
-                        if (forecastMap.containsKey(1)) {
-                            List<String> day1Data = forecastMap.get(1);
-                            Double avgTempC = Double.parseDouble(day1Data.get(0));
-
-                            // Устанавливаем текст кнопки на температуру первого дня
-                            button.setText(String.format(avgTempC.toString()));
-                        } else {
-                            Log.d("WeatherApp", "No data found for day 1.");
-                        }
-
-                        Log.d("WeatherApp", "API request successful. Weather data received.");
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        // Ensure that Toast is shown on the UI thread
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.e("WeatherApp", "API request failed: " + e.getMessage());
-                                Toast.makeText(MainActivity.this, "Failed to load forecast: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-            }
-        });
-
-
-
-
+    public Button getButton() {
+        return button;
     }
 }
