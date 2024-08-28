@@ -49,7 +49,7 @@
                 android:text="temperature C" />
             <!--            android:text="TemperatureF"-->
             <TextView
-                android:id="@+id/forecast_temperature"
+                android:id="@+id/forecast_temperatureF"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
